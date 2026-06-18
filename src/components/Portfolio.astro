@@ -1,0 +1,125 @@
+---
+export interface Props {
+  locale?: Record<string, any>;
+}
+
+const { locale } = Astro.props;
+const t = locale;
+---
+
+<section class="section" id="portfolio">
+  <div class="container">
+    <h2 class="section-title">{t.portfolio.title}</h2>
+    <p class="section-subtitle">{t.portfolio.desc}</p>
+    <div class="portfolio-masonry" id="portfolioGrid">
+      {[...Array(6)].map((_, i) => (
+        <div class="portfolio-item">
+          <div class="portfolio-placeholder">
+            <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="300" fill="var(--surface-soft)"/>
+              <circle cx="200" cy="130" r="40" stroke="var(--muted)" stroke-width="1" opacity="0.3"/>
+              <path d="M160 200l40-50 30 35 30-20 50 55H160z" fill="var(--muted)" opacity="0.15"/>
+              <text x="200" y="260" text-anchor="middle" fill="var(--muted)" font-size="12" font-family="var(--font-display-thai)" opacity="0.5">{t.portfolio.title}</text>
+            </svg>
+          </div>
+          <div class="portfolio-overlay">
+            <span class="portfolio-label">{t.portfolio.title}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .portfolio-masonry {
+    columns: 3;
+    column-gap: var(--space-md);
+  }
+  .portfolio-item {
+    break-inside: avoid;
+    margin-bottom: var(--space-md);
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+  .portfolio-item:hover {
+    transform: scale(1.02);
+  }
+  .portfolio-placeholder {
+    width: 100%;
+    display: block;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .portfolio-placeholder svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .portfolio-item:nth-child(1) .portfolio-placeholder svg { height: 240px; }
+  .portfolio-item:nth-child(2) .portfolio-placeholder svg { height: 300px; }
+  .portfolio-item:nth-child(3) .portfolio-placeholder svg { height: 200px; }
+  .portfolio-item:nth-child(4) .portfolio-placeholder svg { height: 280px; }
+  .portfolio-item:nth-child(5) .portfolio-placeholder svg { height: 220px; }
+  .portfolio-item:nth-child(6) .portfolio-placeholder svg { height: 260px; }
+
+  .portfolio-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out-quart);
+    display: flex;
+    align-items: flex-end;
+    padding: var(--space-md);
+  }
+  .portfolio-item:hover .portfolio-overlay {
+    opacity: 1;
+  }
+  .portfolio-label {
+    font-family: var(--font-display-thai);
+    font-size: 0.85rem;
+    color: #fff;
+  }
+  @media (max-width: 768px) {
+    .portfolio-masonry {
+      columns: 2;
+    }
+  }
+  @media (max-width: 480px) {
+    .portfolio-masonry {
+      columns: 1;
+    }
+  }
+</style>
+
+<script>
+  (async function () {
+    const grid = document.getElementById("portfolioGrid");
+    if (!grid) return;
+    try {
+      const res = await fetch(
+        "https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,full_picture,permalink_url&limit=6&access_token=EAAGm0vm4u2wBO0QHxlGfSQB2TjTQQnLrD8ZBwZCdvF7ZCjVGjCbTZAL19KZBldTZCuL0ysSCpwHkPHl8xhOM9A2uLZAqJZBpQDFk7CzZCZCZBEEpx10g5qyCfnVB9h0PblCjEaZBVpcdIqlkKxhHZAy1tKYOBl3QZA90b6X4ZCu1ZB2Vx8TMLhsiKZByH2Ph2EFYiPIB0lZAe8rpkZBZCp4zNmHR7mIhOs0J90nnjFqAZBfAKPB0kZD"
+      );
+      if (!res.ok) throw new Error("Fetch failed");
+      const data = await res.json();
+      if (data.data && data.data.length > 0) {
+        grid.innerHTML = data.data
+          .filter((p) => p.full_picture)
+          .slice(0, 6)
+          .map(
+            (p) =>
+              `<a href="${p.permalink_url}" target="_blank" rel="noopener" class="portfolio-item" style="break-inside:avoid;margin-bottom:var(--space-md);border-radius:var(--radius-lg);overflow:hidden;display:block;transition:transform 0.4s var(--ease-out-expo);" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="${p.full_picture}" alt="${p.message || ""}" style="width:100%;height:auto;display:block;border-radius:var(--radius-lg);" loading="lazy" />
+              </a>`
+          )
+          .join("");
+      }
+    } catch (e) {
+      console.log("Facebook fetch deferred");
+    }
+  })();
+</script>

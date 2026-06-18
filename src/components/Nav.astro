@@ -1,0 +1,211 @@
+---
+export interface Props {
+  lang?: string;
+  locale?: Record<string, any>;
+}
+
+const { lang = "th", locale } = Astro.props;
+const t = locale;
+const isTH = lang === "th";
+const otherLang = isTH ? "en" : "th";
+const otherPath = isTH ? "/en" : "/";
+---
+
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href={isTH ? "/" : "/en"} class="logo">
+      <img src="/logo.svg" alt="Thiengtham" width="120" height="40" />
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href={isTH ? "/#services" : "/en/#services"} class="nav-link">{t.nav.services}</a>
+      <a href={isTH ? "/#portfolio" : "/en/#portfolio"} class="nav-link">{t.nav.portfolio}</a>
+      <a href={isTH ? "/#contact" : "/en/#contact"} class="nav-link">{t.nav.contact}</a>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <span class="icon-sun">☀</span>
+          <span class="icon-moon">☾</span>
+        </button>
+        <a href={otherPath} class="lang-toggle">{otherLang === "en" ? "EN" : "TH"}</a>
+      </div>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    transition: background 0.3s var(--ease-out-quart);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    z-index: 101;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+  .nav-link {
+    font-family: var(--font-display-thai);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-link:hover {
+    color: var(--sun);
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-left: var(--space-lg);
+  }
+  .theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0.25rem;
+    color: var(--ink);
+    transition: color 0.2s;
+    position: relative;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .theme-toggle .icon-sun,
+  .theme-toggle .icon-moon {
+    position: absolute;
+    transition: opacity 0.3s var(--ease-out-quart), transform 0.3s var(--ease-out-quart);
+  }
+  [data-theme="dark"] .theme-toggle .icon-sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  [data-theme="dark"] .theme-toggle .icon-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0);
+  }
+  [data-theme="light"] .theme-toggle .icon-sun {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0);
+  }
+  [data-theme="light"] .theme-toggle .icon-moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  .lang-toggle {
+    font-family: var(--font-display-thai);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .lang-toggle:hover {
+    border-color: var(--sun);
+    color: var(--sun);
+  }
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0;
+    z-index: 101;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--ink);
+    transition: all 0.3s var(--ease-out-quart);
+    border-radius: 1px;
+  }
+  @media (max-width: 768px) {
+    .nav-links {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 75%;
+      max-width: 320px;
+      height: 100vh;
+      background: var(--surface);
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--space-xl);
+      padding: var(--space-2xl);
+      transition: right 0.4s var(--ease-out-expo);
+      border-left: 1px solid var(--border);
+    }
+    .nav-links.open {
+      right: 0;
+    }
+    .nav-actions {
+      margin-left: 0;
+    }
+    .hamburger {
+      display: flex;
+    }
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+  }
+</style>
+
+<script>
+  const html = document.documentElement;
+  const themeBtn = document.getElementById("themeToggle");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    });
+  }
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("navLinks");
+  if (hamburger && navLinks) {
+    hamburger.addEventListener("click", () => {
+      hamburger.classList.toggle("open");
+      navLinks.classList.toggle("open");
+    });
+    navLinks.querySelectorAll(".nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        hamburger.classList.remove("open");
+        navLinks.classList.remove("open");
+      });
+    });
+  }
+</script>

@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Thiengtham Development",
+    "subtitle": "Home & Condo Renovation",
+    "desc": "Premium Quality, Trusted",
+    "cta": "Free Consultation"
+  },
+  "services": {
+    "title": "Our Services",
+    "items": [
+      {
+        "title": "Home Renovation",
+        "desc": "From flooring and walls to electrical, plumbing, and full-scale remodeling."
+      },
+      {
+        "title": "Condo Repair",
+        "desc": "Fix leaks, upgrade bathrooms, optimize living space in your condo."
+      },
+      {
+        "title": "Interior Design",
+        "desc": "Design and decorate your space to be beautiful, functional, and tailored to you."
+      }
+    ]
+  },
+  "portfolio": {
+    "title": "Latest Work",
+    "desc": "Auto-updated from Facebook"
+  },
+  "process": {
+    "title": "Our Process",
+    "steps": [
+      { "num": "01", "title": "Consult", "desc": "Discuss your needs, initial assessment" },
+      { "num": "02", "title": "Site Survey", "desc": "Engineers visit and evaluate the site" },
+      { "num": "03", "title": "Proposal", "desc": "Detailed quote with materials and timeline" },
+      { "num": "04", "title": "Execute", "desc": "Work begins, quality delivered on time" }
+    ]
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Serving all Bangkok & Metropolitan Area",
+    "line": "LINE",
+    "phone": "Call Now",
+    "facebook": "Facebook",
+    "lineId": "@886gzgas"
+  },
+  "footer": {
+    "copyright": "© 2025 Thiengtham Development. All rights reserved."
+  }
+}

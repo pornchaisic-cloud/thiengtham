@@ -1,0 +1,54 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  lang?: string;
+}
+
+const { title, description, lang = "th" } = Astro.props;
+const isTH = lang === "th";
+---
+
+<!doctype html>
+<html lang={lang} data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | เที่ยงทำ ดีเวลลอปเม้นท์</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="canonical" href={`https://thiengtham-development.pages.dev${Astro.url.pathname}`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`https://thiengtham-development.pages.dev${Astro.url.pathname}`} />
+    <meta property="og:image" content="https://thiengtham-development.pages.dev/logo.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": isTH ? "เที่ยงทำ ดีเวลลอปเม้นท์" : "Thiengtham Development",
+      "description": isTH ? "รับเหมาซ่อมบ้านและคอนโด" : "Home & Condo Renovation",
+      "url": "https://thiengtham-development.pages.dev",
+      "telephone": "+6620698888",
+      "areaServed": ["Bangkok", "Nonthaburi", "Pathum Thani", "Samut Prakan"],
+      "priceRange": "$$",
+      "founder": { "@type": "Person", "name": "เที่ยงทำ" },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+6620698888",
+        "contactType": "customer service",
+        "availableLanguage": ["Thai", "English"]
+      }
+    })} />
+    <link rel="stylesheet" href="/src/styles/tokens.css" />
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    <script>
+      const saved = localStorage.getItem("theme");
+      if (saved) document.documentElement.setAttribute("data-theme", saved);
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

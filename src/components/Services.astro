@@ -1,0 +1,79 @@
+---
+export interface Props {
+  locale?: Record<string, any>;
+}
+
+const { locale } = Astro.props;
+const t = locale;
+---
+
+<section class="section" id="services">
+  <div class="container">
+    <h2 class="section-title">{t.services.title}</h2>
+    <p class="section-subtitle">{t.services.desc}</p>
+    <div class="services-grid">
+      {
+        t.services.items.map((item: any) => (
+          <article class="service-card">
+            <div class="service-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--sun)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <h3 class="service-title">{item.title}</h3>
+            <p class="service-desc">{item.desc}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+  .service-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl) var(--space-lg);
+    transition: all 0.4s var(--ease-out-expo);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .service-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--sun);
+    box-shadow: 0 12px 40px rgba(200, 150, 46, 0.08);
+  }
+  .service-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: rgba(200, 150, 46, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .service-title {
+    font-family: var(--font-display-thai);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  .service-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  @media (max-width: 768px) {
+    .services-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

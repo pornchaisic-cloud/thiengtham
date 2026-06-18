@@ -1,0 +1,126 @@
+---
+export interface Props {
+  locale?: Record<string, any>;
+}
+
+const { locale } = Astro.props;
+const t = locale;
+---
+
+<section class="section contact-section" id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-info">
+        <h2 class="section-title">{t.contact.title}</h2>
+        <p class="contact-subtitle">{t.contact.subtitle}</p>
+        <div class="contact-methods">
+          <a href="https://line.me/R/ti/p/~@886gzgas" target="_blank" rel="noopener" class="contact-card line">
+            <div class="contact-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div>
+              <strong>LINE</strong>
+              <span>{t.contact.lineId}</span>
+            </div>
+          </a>
+          <a href="tel:0620698888" class="contact-card phone">
+            <div class="contact-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div>
+              <strong>{t.contact.phone}</strong>
+              <span>062-069-8888</span>
+            </div>
+          </a>
+          <a href="https://www.facebook.com/ThiengTham.DEV" target="_blank" rel="noopener" class="contact-card facebook">
+            <div class="contact-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+            <div>
+              <strong>{t.contact.facebook}</strong>
+              <span>/ThiengTham.DEV</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="contact-facebook">
+        <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FThiengTham.DEV&tabs=timeline&width=340&height=400&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width="340" height="400" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen="true" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-section {
+    background: var(--surface-soft);
+    transition: background 0.3s var(--ease-out-quart);
+  }
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2xl);
+    align-items: start;
+  }
+  .contact-subtitle {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin-bottom: var(--space-lg);
+  }
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: all 0.3s var(--ease-out-expo);
+    cursor: pointer;
+  }
+  .contact-card:hover {
+    border-color: var(--sun);
+    transform: translateX(4px);
+  }
+  .contact-card div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .contact-card strong {
+    font-size: 0.95rem;
+  }
+  .contact-card span {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .contact-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .line .contact-icon { color: #06C755; background: rgba(6,199,85,0.08); }
+  .phone .contact-icon { color: var(--sun); background: rgba(200,150,46,0.08); }
+  .facebook .contact-icon { color: #1877F2; background: rgba(24,119,242,0.08); }
+  .contact-facebook iframe {
+    border-radius: var(--radius-md);
+    max-width: 100%;
+  }
+  @media (max-width: 768px) {
+    .contact-inner {
+      grid-template-columns: 1fr;
+    }
+    .contact-facebook {
+      display: flex;
+      justify-content: center;
+    }
+  }
+</style>

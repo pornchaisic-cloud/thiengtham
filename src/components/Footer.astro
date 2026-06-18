@@ -1,0 +1,87 @@
+---
+export interface Props {
+  lang?: string;
+  locale?: Record<string, any>;
+}
+
+const { lang = "th", locale } = Astro.props;
+const t = locale;
+const isTH = lang === "th";
+const otherLang = isTH ? "en" : "th";
+const otherPath = isTH ? "/en" : "/";
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="/logo.svg" alt="Thiengtham" width="100" height="34" />
+    </div>
+    <nav class="footer-links">
+      <a href={isTH ? "/#services" : "/en/#services"}>{t.nav.services}</a>
+      <a href={isTH ? "/#portfolio" : "/en/#portfolio"}>{t.nav.portfolio}</a>
+      <a href={isTH ? "/#contact" : "/en/#contact"}>{t.nav.contact}</a>
+    </nav>
+    <div class="footer-bottom">
+      <p class="footer-copy">{t.footer.copyright}</p>
+      <div class="footer-lang">
+        <a href={otherPath} class="lang-link">{otherLang === "en" ? "English" : "ภาษาไทย"}</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-xl) 0;
+    transition: background 0.3s var(--ease-out-quart);
+  }
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  .footer-links {
+    display: flex;
+    gap: var(--space-lg);
+  }
+  .footer-links a {
+    font-family: var(--font-display-thai);
+    font-size: 0.9rem;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .footer-links a:hover {
+    color: var(--sun);
+  }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+  }
+  .footer-copy {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .lang-link {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+  }
+  .lang-link:hover {
+    border-color: var(--sun);
+    color: var(--sun);
+  }
+  @media (max-width: 768px) {
+    .footer-bottom {
+      flex-direction: column;
+      gap: var(--space-md);
+      text-align: center;
+    }
+  }
+</style>
