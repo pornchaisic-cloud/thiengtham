@@ -1,0 +1,43 @@
+---
+
+---
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>✦ Thiengtham Development</span>
+    <span>✦ เที่ยงทำ ดีเวลลอปเม้นท์</span>
+    <span>✦ รับเหมาซ่อมบ้านและคอนโด</span>
+    <span>✦ Quality craftsmanship</span>
+    <span>✦ Thiengtham Development</span>
+    <span>✦ เที่ยงทำ ดีเวลลอปเม้นท์</span>
+    <span>✦ รับเหมาซ่อมบ้านและคอนโด</span>
+    <span>✦ Quality craftsmanship</span>
+  </div>
+</div>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 48px;
+    animation: marquee-scroll 24s linear infinite;
+    width: max-content;
+  }
+  .marquee-track span {
+    font-family: var(--font-display-en);
+    font-size: 0.75rem;
+    font-style: italic;
+    white-space: nowrap;
+    color: var(--ink);
+    opacity: 0.25;
+  }
+  @keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+</style>

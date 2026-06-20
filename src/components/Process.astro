@@ -9,11 +9,14 @@ const t = locale;
 
 <section class="section" id="process">
   <div class="container">
-    <h2 class="section-title">{t.process.title}</h2>
+    <div class="section-title-wrapper reveal">
+      <h2 class="section-title">{t.process.title}</h2>
+      <div class="section-divider"></div>
+    </div>
   </div>
   <div class="process-steps">
     {t.process.steps.map((step: any, i: number) => (
-      <div class="step">
+      <div class={`step reveal reveal-delay-${i + 1}`}>
         <div class="step-num">{step.num}</div>
         <div class="step-content">
           <h3 class="step-title">{step.title}</h3>
@@ -40,39 +43,41 @@ const t = locale;
     position: relative;
     padding: var(--space-lg) 0;
   }
+  .step {
+    display: flex;
+    gap: var(--space-lg);
+    position: relative;
+    padding: var(--space-lg) 0;
+  }
   .step-num {
     font-family: var(--font-display-en);
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 400;
     color: var(--sun);
     min-width: 48px;
     line-height: 1;
-    opacity: 0.6;
+    opacity: 0.4;
+    font-style: italic;
   }
   .step-content {
     flex: 1;
   }
   .step-title {
     font-family: var(--font-display-thai);
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: var(--space-xs);
+    letter-spacing: -0.01em;
   }
   .step-desc {
     color: var(--muted);
     font-size: 0.95rem;
-  }
-  .step-line {
-    position: absolute;
-    left: 18px;
-    top: 72px;
-    bottom: 0;
-    width: 1px;
-    background: var(--border);
+    line-height: 1.7;
   }
   @media (max-width: 768px) {
     .step {
       gap: var(--space-md);
+      padding: var(--space-md) 0;
     }
     .step-num {
       font-size: 1.5rem;

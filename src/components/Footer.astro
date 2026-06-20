@@ -12,75 +12,79 @@ const otherPath = isTH ? "/en" : "/";
 ---
 
 <footer class="footer">
-  <div class="container footer-inner">
-    <div class="footer-brand">
-      <img src="/logo.svg" alt="Thiengtham" width="100" height="34" />
-    </div>
-    <nav class="footer-links">
+  <div class="container">
+    <div class="footer-brand">✦ Thiengtham</div>
+    <div class="footer-tagline">เที่ยงทำ ดีเวลลอปเม้นท์</div>
+    <div class="footer-links">
       <a href={isTH ? "/#services" : "/en/#services"}>{t.nav.services}</a>
       <a href={isTH ? "/#portfolio" : "/en/#portfolio"}>{t.nav.portfolio}</a>
       <a href={isTH ? "/#contact" : "/en/#contact"}>{t.nav.contact}</a>
-    </nav>
+    </div>
+    <div class="footer-divider"></div>
     <div class="footer-bottom">
-      <p class="footer-copy">{t.footer.copyright}</p>
-      <div class="footer-lang">
-        <a href={otherPath} class="lang-link">{otherLang === "en" ? "English" : "ภาษาไทย"}</a>
-      </div>
+      <span>{t.footer.copyright}</span>
+      <span>Crafted with care</span>
     </div>
   </div>
 </footer>
 
 <style>
   .footer {
+    background: var(--surface-elevated);
     border-top: 1px solid var(--border);
     padding: var(--space-xl) 0;
     transition: background 0.3s var(--ease-out-quart);
   }
-  .footer-inner {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
+  .footer-brand {
+    font-family: var(--font-display-en);
+    font-size: 1.2rem;
+    color: var(--sun);
+    font-weight: 500;
+    text-align: left;
+  }
+  .footer-tagline {
+    font-size: 0.75rem;
+    opacity: 0.3;
+    text-align: left;
+    margin-top: 2px;
   }
   .footer-links {
     display: flex;
-    gap: var(--space-lg);
+    justify-content: flex-start;
+    gap: 32px;
+    margin-top: 14px;
   }
   .footer-links a {
-    font-family: var(--font-display-thai);
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     color: var(--muted);
+    text-decoration: none;
     transition: color 0.2s;
   }
   .footer-links a:hover {
     color: var(--sun);
   }
+  .footer-divider {
+    border-top: 1px solid var(--border);
+    margin: 16px auto 12px;
+    max-width: 400px;
+  }
   .footer-bottom {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--border);
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
-  .footer-copy {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-  .lang-link {
-    font-size: 0.85rem;
-    color: var(--muted);
-    padding: 0.25rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    transition: all 0.2s;
-  }
-  .lang-link:hover {
-    border-color: var(--sun);
-    color: var(--sun);
+  .footer-bottom span {
+    opacity: 0.18;
   }
   @media (max-width: 768px) {
+    .footer-links {
+      gap: 24px;
+    }
     .footer-bottom {
       flex-direction: column;
-      gap: var(--space-md);
+      gap: 8px;
       text-align: center;
     }
   }

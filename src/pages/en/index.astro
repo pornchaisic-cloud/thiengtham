@@ -2,9 +2,11 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Nav from "../../components/Nav.astro";
 import Hero from "../../components/Hero.astro";
+import Marquee from "../../components/Marquee.astro";
 import Services from "../../components/Services.astro";
 import Portfolio from "../../components/Portfolio.astro";
 import Process from "../../components/Process.astro";
+import WhyUs from "../../components/WhyUs.astro";
 import Contact from "../../components/Contact.astro";
 import Footer from "../../components/Footer.astro";
 
@@ -13,12 +15,14 @@ const lang = "en";
 const locale = en;
 ---
 
-<BaseLayout title="Thiengtham Development" description="Home & Condo Renovation - Premium Quality, Trusted" lang={lang}>
+<BaseLayout title="Thiengtham Development" description="Bangkok condo renovation & home repair specialist. Free consultation. Call 062-069-8888." lang={lang}>
   <Nav lang={lang} locale={locale} />
   <main>
     <Hero locale={locale} />
-    <Services locale={locale} />
+    <Marquee />
+    <Services locale={locale} lang="en" />
     <Portfolio locale={locale} />
+    <WhyUs locale={locale} />
     <Process locale={locale} />
     <Contact locale={locale} />
   </main>

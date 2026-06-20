@@ -5,50 +5,78 @@
     "contact": "Contact"
   },
   "hero": {
-    "title": "Thiengtham Development",
-    "subtitle": "Home & Condo Renovation",
-    "desc": "Premium Quality, Trusted",
-    "cta": "Free Consultation"
+    "title": "Thiengtham",
+    "titleGold": "Development",
+    "subtitle": "Bangkok Condo & Home Renovation",
+    "desc": "Premium Quality, Trusted since 2015",
+    "cta": "Free Consultation",
+    "viewWork": "View Work"
   },
   "services": {
-    "title": "Our Services",
+    "title": "Our Renovation Services",
     "items": [
       {
-        "title": "Home Renovation",
-        "desc": "From flooring and walls to electrical, plumbing, and full-scale remodeling."
+        "title": "Condo Renovation Bangkok",
+        "desc": "Full condo repair & renovation in Bangkok. Fix leaks, electrical, plumbing, bathroom upgrades. Professional team, quality guaranteed."
       },
       {
-        "title": "Condo Repair",
-        "desc": "Fix leaks, upgrade bathrooms, optimize living space in your condo."
+        "title": "Home Renovation",
+        "desc": "Complete home remodeling from flooring and walls to electrical, plumbing, and full-scale renovation. Quality craftsmanship."
       },
       {
         "title": "Interior Design",
-        "desc": "Design and decorate your space to be beautiful, functional, and tailored to you."
+        "desc": "Professional interior design for condos & homes. Beautiful, functional spaces using quality materials at fair prices."
+      }
+    ]
+  },
+  "whyus": {
+    "title": "Why Choose Us",
+    "items": [
+      {
+        "icon": "clock",
+        "title": "10+ Years Experience",
+        "desc": "Specializing in condo & home renovation since 2015 with 200+ completed projects."
+      },
+      {
+        "icon": "shield",
+        "title": "Professional Team",
+        "desc": "Skilled craftsmen, carefully selected. Every project comes with our quality guarantee."
+      },
+      {
+        "icon": "map",
+        "title": "Serving All Bangkok",
+        "desc": "Condo renovation services across Bangkok, Nonthaburi, Pathum Thani, Samut Prakan."
+      },
+      {
+        "icon": "message",
+        "title": "Free Consultation",
+        "desc": "No-obligation consultation. Honest advice, no upselling."
       }
     ]
   },
   "portfolio": {
-    "title": "Latest Work",
-    "desc": "Auto-updated from Facebook"
+    "title": "Our Recent Work",
+    "desc": "Condo & home renovation projects — updated from Facebook"
   },
   "process": {
-    "title": "Our Process",
+    "title": "How We Work",
     "steps": [
-      { "num": "01", "title": "Consult", "desc": "Discuss your needs, initial assessment" },
-      { "num": "02", "title": "Site Survey", "desc": "Engineers visit and evaluate the site" },
-      { "num": "03", "title": "Proposal", "desc": "Detailed quote with materials and timeline" },
-      { "num": "04", "title": "Execute", "desc": "Work begins, quality delivered on time" }
+      { "num": "01", "title": "Free Consult", "desc": "Discuss your needs, free initial assessment" },
+      { "num": "02", "title": "Site Survey", "desc": "On-site measurement, condition assessment" },
+      { "num": "03", "title": "Proposal", "desc": "Transparent quote with materials & timeline" },
+      { "num": "04", "title": "Execute", "desc": "Quality work delivered on schedule, guaranteed" }
     ]
   },
   "contact": {
     "title": "Contact Us",
     "subtitle": "Serving all Bangkok & Metropolitan Area",
+    "tagline": "Bangkok Condo Renovation\nCall 062-069-8888",
     "line": "LINE",
     "phone": "Call Now",
     "facebook": "Facebook",
     "lineId": "@886gzgas"
   },
   "footer": {
-    "copyright": "© 2025 Thiengtham Development. All rights reserved."
+    "copyright": "© 2025 Thiengtham Development — Bangkok Condo & Home Renovation"
   }
 }

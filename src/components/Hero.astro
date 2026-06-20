@@ -10,26 +10,26 @@ const t = locale;
 <section class="hero" id="hero">
   <div class="hero-bg"></div>
   <div class="container hero-content">
-    <div class="hero-text">
-      <h1 class="hero-title">{t.hero.title}</h1>
-      <p class="hero-subtitle">{t.hero.subtitle}</p>
-      <p class="hero-desc">{t.hero.desc}</p>
-      <a href="https://line.me/R/ti/p/~@886gzgas" target="_blank" rel="noopener" class="btn btn-primary hero-cta">
-        <span>{t.hero.cta}</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </a>
-    </div>
-    <div class="hero-visual">
-      <div class="hero-symbol">
-        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="100" r="80" stroke="var(--sun)" stroke-width="1" opacity="0.2"/>
-          <circle cx="100" cy="100" r="60" stroke="var(--sun)" stroke-width="1" opacity="0.4"/>
-          <circle cx="100" cy="100" r="40" fill="var(--sun)" opacity="0.15"/>
-          <circle cx="100" cy="98" r="18" fill="var(--sun)" opacity="0.6"/>
-          <circle cx="100" cy="92" r="10" fill="var(--sun-light)" opacity="0.9"/>
-          <rect x="82" y="30" width="36" height="3" rx="1.5" fill="var(--sun-light)" opacity="0.3"/>
-          <rect x="78" y="38" width="44" height="2" rx="1" fill="var(--sun-light)" opacity="0.2"/>
-        </svg>
+    <div class="hero-text reveal">
+      <p class="hero-eyebrow">Thiengtham Development</p>
+      <h1 class="hero-title">
+        {t.hero.title}<br>
+        <span class="hero-gold-line">{t.hero.titleGold}</span>
+      </h1>
+      <div class="hero-meta">
+        <span>ตั้งแต่ 2015</span>
+        <span class="dot">●</span>
+        <span>200+ โปรเจกต์</span>
+        <span class="dot">●</span>
+        <span>รับเหมาซ่อมบ้าน-คอนโด</span>
+      </div>
+      <div class="hero-actions">
+        <a href="https://line.me/R/ti/p/~@886gzgas" target="_blank" rel="noopener" class="btn-hero btn-hero-primary">
+          {t.hero.cta}
+        </a>
+        <a href="#portfolio" class="btn-hero btn-hero-ghost">
+          {t.hero.viewWork}
+        </a>
       </div>
     </div>
   </div>
@@ -41,90 +41,115 @@ const t = locale;
     min-height: 100vh;
     display: flex;
     align-items: center;
+    justify-content: center;
     overflow: hidden;
     padding-top: var(--nav-height);
-  }
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-soft) 100%);
-    z-index: 0;
-  }
-  [data-theme="light"] .hero-bg {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(200,150,46,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 80%, rgba(200,150,46,0.04) 0%, transparent 50%);
   }
   .hero-content {
     position: relative;
     z-index: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2xl);
-    align-items: center;
+    display: flex;
+    justify-content: center;
     padding-top: var(--space-xl);
     padding-bottom: var(--space-2xl);
   }
   .hero-text {
+    text-align: center;
+    max-width: 720px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: var(--space-md);
+  }
+  .hero-eyebrow {
+    font-family: var(--font-display-en);
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
   }
   .hero-title {
     font-family: var(--font-display-thai);
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-size: clamp(3rem, 7vw, 5rem);
     font-weight: 700;
-    color: var(--sun-light);
-    line-height: 1.15;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    color: var(--ink);
   }
-  .hero-subtitle {
-    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-    font-weight: 500;
+  .hero-gold-line {
+    display: block;
     color: var(--sun);
+    position: relative;
   }
-  .hero-desc {
-    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 480px;
+  .hero-gold-line::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: rgba(200,150,46,0.15);
+    z-index: -1;
   }
-  .hero-cta {
-    margin-top: var(--space-md);
-    align-self: flex-start;
-  }
-  .hero-visual {
+  .hero-meta {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    gap: 20px;
+    margin-top: 12px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
   }
-  .hero-symbol {
-    width: clamp(160px, 25vw, 280px);
-    height: clamp(160px, 25vw, 280px);
-    animation: float 6s var(--ease-out-expo) infinite;
+  .hero-meta span {
+    opacity: 0.35;
   }
-  .hero-symbol svg {
-    width: 100%;
-    height: 100%;
+  .hero-meta .dot {
+    opacity: 0.15;
+    font-size: 0.35rem;
   }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-16px); }
+  .hero-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+  }
+  .btn-hero {
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-family: var(--font-display-thai);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.3s var(--ease-out-expo);
+    cursor: pointer;
+  }
+  .btn-hero-primary {
+    background: var(--sun);
+    color: #0D0D0D;
+    border: none;
+  }
+  .btn-hero-primary:hover {
+    background: var(--sun-light);
+    transform: translateY(-2px);
+  }
+  .btn-hero-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-hero-ghost:hover {
+    border-color: var(--sun);
+    color: var(--sun);
+    transform: translateY(-2px);
   }
   @media (max-width: 768px) {
-    .hero-content {
-      grid-template-columns: 1fr;
-      text-align: center;
-      gap: var(--space-xl);
-    }
-    .hero-cta {
-      align-self: center;
-    }
-    .hero-desc {
-      max-width: none;
-    }
-    .hero-visual {
-      order: -1;
-    }
-    .hero-symbol {
-      width: 120px;
-      height: 120px;
+    .hero-meta {
+      flex-wrap: wrap;
+      justify-content: center;
     }
   }
 </style>

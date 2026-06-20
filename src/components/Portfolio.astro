@@ -9,11 +9,13 @@ const t = locale;
 
 <section class="section" id="portfolio">
   <div class="container">
-    <h2 class="section-title">{t.portfolio.title}</h2>
-    <p class="section-subtitle">{t.portfolio.desc}</p>
-    <div class="portfolio-masonry" id="portfolioGrid">
+    <div class="section-title-wrapper reveal">
+      <h2 class="section-title">{t.portfolio.title}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="portfolio-masonry reveal" id="portfolioGrid">
       {[...Array(6)].map((_, i) => (
-        <div class="portfolio-item">
+        <div class="portfolio-item" style={`transition-delay: ${i * 0.08}s`}>
           <div class="portfolio-placeholder">
             <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="400" height="300" fill="var(--surface-soft)"/>
@@ -43,21 +45,27 @@ const t = locale;
     border-radius: var(--radius-lg);
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.4s var(--ease-out-expo);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--border);
   }
   .portfolio-item:hover {
     transform: scale(1.02);
+    border-color: var(--sun);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   }
   .portfolio-placeholder {
     width: 100%;
     display: block;
-    border-radius: var(--radius-lg);
     overflow: hidden;
   }
   .portfolio-placeholder svg {
     width: 100%;
     height: auto;
     display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .portfolio-item:hover .portfolio-placeholder svg {
+    transform: scale(1.05);
   }
   .portfolio-item:nth-child(1) .portfolio-placeholder svg { height: 240px; }
   .portfolio-item:nth-child(2) .portfolio-placeholder svg { height: 300px; }
@@ -69,9 +77,9 @@ const t = locale;
   .portfolio-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
     opacity: 0;
-    transition: opacity 0.3s var(--ease-out-quart);
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     align-items: flex-end;
     padding: var(--space-md);
@@ -97,12 +105,13 @@ const t = locale;
 </style>
 
 <script>
-  (async function () {
+  const FB_TOKEN = import.meta.env.PUBLIC_FB_ACCESS_TOKEN;
+  document.addEventListener("DOMContentLoaded", async function () {
     const grid = document.getElementById("portfolioGrid");
-    if (!grid) return;
+    if (!grid || !FB_TOKEN) return;
     try {
       const res = await fetch(
-        "https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,full_picture,permalink_url&limit=6&access_token=EAAGm0vm4u2wBO0QHxlGfSQB2TjTQQnLrD8ZBwZCdvF7ZCjVGjCbTZAL19KZBldTZCuL0ysSCpwHkPHl8xhOM9A2uLZAqJZBpQDFk7CzZCZCZBEEpx10g5qyCfnVB9h0PblCjEaZBVpcdIqlkKxhHZAy1tKYOBl3QZA90b6X4ZCu1ZB2Vx8TMLhsiKZByH2Ph2EFYiPIB0lZAe8rpkZBZCp4zNmHR7mIhOs0J90nnjFqAZBfAKPB0kZD"
+        `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,full_picture,permalink_url&limit=6&access_token=${FB_TOKEN}`
       );
       if (!res.ok) throw new Error("Fetch failed");
       const data = await res.json();
@@ -112,8 +121,8 @@ const t = locale;
           .slice(0, 6)
           .map(
             (p) =>
-              `<a href="${p.permalink_url}" target="_blank" rel="noopener" class="portfolio-item" style="break-inside:avoid;margin-bottom:var(--space-md);border-radius:var(--radius-lg);overflow:hidden;display:block;transition:transform 0.4s var(--ease-out-expo);" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                <img src="${p.full_picture}" alt="${p.message || ""}" style="width:100%;height:auto;display:block;border-radius:var(--radius-lg);" loading="lazy" />
+              `<a href="${p.permalink_url}" target="_blank" rel="noopener" class="portfolio-item" style="break-inside:avoid;margin-bottom:var(--space-md);overflow:hidden;display:block;transition:transform 0.4s var(--ease-out-expo);">
+                <img src="${p.full_picture}" alt="${p.message || ""}" style="width:100%;height:auto;display:block;" loading="lazy" />
               </a>`
           )
           .join("");
@@ -121,5 +130,5 @@ const t = locale;
     } catch (e) {
       console.log("Facebook fetch deferred");
     }
-  })();
+  });
 </script>

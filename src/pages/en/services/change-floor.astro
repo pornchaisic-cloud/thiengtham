@@ -1,0 +1,196 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Nav from "../../../components/Nav.astro";
+import Footer from "../../../components/Footer.astro";
+import en from "../../../i18n/en.json";
+
+const lang = "en";
+const locale = en;
+---
+
+<BaseLayout title="Floor Replacement & Installation | Thiengtham Development" description="Old floors — rotted, cracked, peeling, water-damaged — we handle it all. Free consultation & quote." lang={lang}>
+  <Nav lang={lang} locale={locale} />
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="page-hero-content reveal">
+          <p class="page-eyebrow">Services</p>
+          <h1 class="page-title">Floor Replacement & Installation</h1>
+          <p class="hero-subtitle">Old floors — rotted, cracked, peeling, water-damaged — we handle it all in one place</p>
+          <p class="hero-subtitle">Whether worn from years of use, water damage, or a full renovation, we take care of every step from start to finish</p>
+          <a href="https://line.me/R/ti/p/~@886gzgas" target="_blank" rel="noopener" class="btn-cta">Free Consultation via LINE</a>
+        </div>
+      </div>
+    </section>
+    <section class="section section-first">
+      <div class="container">
+        <div class="section-title-wrapper reveal">
+          <h2 class="section-title">Why Choose Us</h2>
+          <div class="section-divider"></div>
+        </div>
+        <div class="benefits-grid">
+          <div class="benefit-card reveal reveal-delay-1">
+            <h3>Experienced Craftsmen</h3>
+            <p>Skilled team with years of hands-on experience, carefully selected for every project</p>
+          </div>
+          <div class="benefit-card reveal reveal-delay-2">
+            <h3>Quality Materials</h3>
+            <p>Multiple material grades to fit your budget. Every installation comes with warranty</p>
+          </div>
+          <div class="benefit-card reveal reveal-delay-3">
+            <h3>Clean & On-Time</h3>
+            <p>Systematic workflow, no debris left behind, minimal disruption to neighbors</p>
+          </div>
+          <div class="benefit-card reveal reveal-delay-4">
+            <h3>Transparent Pricing</h3>
+            <p>Clear quotation upfront. No hidden fees, no surprises</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="contact-cta">
+      <div class="container">
+        <div class="cta-block reveal">
+          <h2 class="cta-title">Need Floor Replacement?</h2>
+          <p class="cta-desc">Free consultation & on-site assessment — no obligation</p>
+          <div class="cta-channels">
+            <a href="https://line.me/R/ti/p/~@886gzgas" target="_blank" rel="noopener" class="btn-cta">LINE: @886gzgas</a>
+            <a href="https://www.facebook.com/ThiengTham.DEV" target="_blank" rel="noopener" class="btn-cta btn-cta-outline">Facebook: ThiengTham.DEV</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer lang={lang} locale={locale} />
+</BaseLayout>
+
+<style>
+  .page-hero {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--nav-height) + var(--space-xl));
+    padding-bottom: var(--space-2xl);
+    background:
+      radial-gradient(ellipse at 30% 50%, rgba(200,150,46,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 50%, rgba(200,150,46,0.04) 0%, transparent 50%);
+  }
+  .page-hero-content {
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .page-eyebrow {
+    font-family: var(--font-display-thai);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    color: var(--sun);
+  }
+  .page-title {
+    font-family: var(--font-display-thai);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--sun);
+    line-height: 1.1;
+  }
+  .hero-subtitle {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+  .section-first {
+    padding-top: var(--space-lg);
+  }
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 32px;
+    border-radius: 100px;
+    font-family: var(--font-display-thai);
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: var(--sun);
+    color: #0D0D0D;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s var(--ease-out-expo);
+    align-self: flex-start;
+  }
+  .btn-cta:hover {
+    background: var(--sun-light);
+    transform: translateY(-2px);
+  }
+  .btn-cta-outline {
+    background: transparent;
+    border: 1.5px solid var(--sun);
+    color: var(--sun);
+  }
+  .btn-cta-outline:hover {
+    background: var(--sun);
+    color: #0D0D0D;
+  }
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+  }
+  .benefit-card {
+    padding: var(--space-lg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    transition: all 0.4s var(--ease-out-expo);
+  }
+  [data-theme="dark"] .benefit-card {
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .benefit-card h3 {
+    font-family: var(--font-display-thai);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
+  .benefit-card p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .cta-block {
+    text-align: center;
+    padding: var(--space-2xl) 0;
+    border-top: 1px solid var(--border);
+  }
+  .cta-title {
+    font-family: var(--font-display-thai);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+  }
+  .cta-desc {
+    color: var(--muted);
+    margin-bottom: var(--space-lg);
+    font-size: 1rem;
+  }
+  .cta-channels {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .cta-channels .btn-cta {
+    align-self: center;
+  }
+  @media (max-width: 768px) {
+    .benefits-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .benefits-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
