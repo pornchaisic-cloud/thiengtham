@@ -216,7 +216,7 @@ const locale = en;
   .section-alt {
     background: var(--card-bg);
   }
-  [data-theme="dark"] .section-alt {
+  :global([data-theme="dark"]) .section-alt {
     background: rgba(255,255,255,0.02);
   }
   .btn-cta {
@@ -266,7 +266,7 @@ const locale = en;
     gap: var(--space-md);
     --card-accent: var(--sun);
   }
-  [data-theme="dark"] .type-card {
+  :global([data-theme="dark"]) .type-card {
     border: 1px solid rgba(255,255,255,0.06);
   }
   .severity-1 {
@@ -339,7 +339,7 @@ const locale = en;
     background: var(--bg);
     transition: all 0.4s var(--ease-out-expo);
   }
-  [data-theme="dark"] .step {
+  :global([data-theme="dark"]) .step {
     border: 1px solid rgba(255,255,255,0.06);
   }
   .step-num {
@@ -386,7 +386,7 @@ const locale = en;
     font-size: 1rem;
     font-weight: 500;
   }
-  [data-theme="dark"] .check-item {
+  :global([data-theme="dark"]) .check-item {
     border: 1px solid rgba(255,255,255,0.06);
   }
   .check-mark {

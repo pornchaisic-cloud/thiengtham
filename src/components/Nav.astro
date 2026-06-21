@@ -51,13 +51,13 @@ const otherPath = isTH ? "/en" : "/";
     z-index: 100;
     transition: background 0.3s var(--ease-out-quart), border-color 0.3s var(--ease-out-quart);
   }
-  [data-theme="dark"] .nav {
+  :global([data-theme="dark"]) .nav {
     background: rgba(13, 13, 13, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom-color: rgba(255, 255, 255, 0.04);
   }
-  [data-theme="light"] .nav {
+  :global([data-theme="light"]) .nav {
     background: rgba(245, 245, 240, 0.9);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -120,19 +120,19 @@ const otherPath = isTH ? "/en" : "/";
     position: absolute;
     transition: opacity 0.3s var(--ease-out-quart), transform 0.3s var(--ease-out-quart);
   }
-  [data-theme="dark"] .theme-toggle .icon-sun {
+  :global([data-theme="dark"]) .theme-toggle .icon-sun {
     opacity: 1;
     transform: rotate(0deg) scale(1);
   }
-  [data-theme="dark"] .theme-toggle .icon-moon {
+  :global([data-theme="dark"]) .theme-toggle .icon-moon {
     opacity: 0;
     transform: rotate(90deg) scale(0);
   }
-  [data-theme="light"] .theme-toggle .icon-sun {
+  :global([data-theme="light"]) .theme-toggle .icon-sun {
     opacity: 0;
     transform: rotate(-90deg) scale(0);
   }
-  [data-theme="light"] .theme-toggle .icon-moon {
+  :global([data-theme="light"]) .theme-toggle .icon-moon {
     opacity: 1;
     transform: rotate(0deg) scale(1);
   }
