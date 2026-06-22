@@ -1,6 +1,0 @@
-@echo off
-title Thiengtham Clips Generator
-cd /d "D:\web thiengtham\clips_output"
-echo Creating 4 freeze-frame video clips...
-powershell -ExecutionPolicy Bypass -File "make_clips.ps1"
-pause
