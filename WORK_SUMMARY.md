@@ -1,33 +1,31 @@
-# สรุปงาน 2026-06-20 (คืนนี้)
+﻿# สรุปงาน 2026-06-23
 
 ## ทำวันนี้
-### 3 หน้า TH Service — แก้ไข/ปรับปรุง
-| หน้า | การเปลี่ยนแปลง |
-|------|---------------|
-| `change-floor` | hero subtitle custom + spacing section-first + เปลี่ยนปุ่มโทร→Facebook |
-| `fix-crack` | เนื้อหาทั้งหมด (hero, severity 4 cards, 5 steps, 4 checkmarks, CTA) |
-| `painting` | เนื้อหาทั้งหมด (hero, severity 4 cards, 5 steps, 4 checkmarks, CTA) |
 
-### 3 หน้า EN Service — สร้างใหม่ (`/en/services/...`)
-- `change-floor` — hero + Why Choose Us 4 cards + CTA (แปลจาก TH)
-- `fix-crack` — เต็มรูปแบบ (crack types + steps + checkmarks)
-- `painting` — เต็มรูปแบบ (painting types + steps + checkmarks)
+### Step 2 — ตั้ง GitHub Secrets
+| Secret | ค่า | ไว้ทำอะไร |
+|--------|-----|----------|
+| `PUBLIC_FB_ACCESS_TOKEN` | จาก `.env` | ดึงรูป Facebook Graph API ตอน build |
+| `CF_ACCOUNT_ID` | `61257b4cb466aee91b4b06f25d42bf9b` | Cloudflare Account ID |
+| `CF_API_TOKEN` | สร้างจาก Dashboard | Deploy ขึ้น Cloudflare Pages |
+- ใช้ Node.js + libsodium เข้ารหัสผ่าน GitHub API
+- 3 secrets verified ใน repo
 
-### Fix
-- `Services.astro` — ทำให้ link บริการ locale-aware (TH→/services/..., EN→/en/services/...)
+### Step 4 — แก้ EN Service Pages
+| ไฟล์ | แก้ไข |
+|------|-------|
+| `src/i18n/en.json` | `services.items` → ตรงกับ 3 หน้าบริการจริง + keyword (SPC, laminate, marble) |
+| `change-floor.astro` | เพิ่ม material keywords ใน hero + `"a warranty"` |
+| `fix-crack.astro` | title → **Wall & Structural Crack Repair**, ขยายเป็น settlement/subsidence |
+| `painting.astro` | badges: Standard Interior, High-Durability Exterior, Precision Ceiling, Large-Scale/Common Areas + primer step wording |
 
-### ไฟล์ที่ลบ (ไม่เกี่ยวข้อง)
-- `design-preview.html`, `font-preview.html`, `fix-dist.ps1`
-- `THIENGTHAM_PROGRESS.md`, `desktop.ini`, `.env.example`
-- `logo/` โฟลเดอร์ทั้งหมด (ของจริงใช้ใน `public/`)
+### Deploy
+- Commit `8b02ba6` → push → Cloudflare Pages
+- Build 0 error, 8 pages
+- Site: `https://thiengtham.com`
 
-## สำหรับพรุ่งนี้
-- [ ] **Facebook Page** — นำข้อมูล FB Page (ThiengTham.DEV) มาใส่ในเว็บ เช่น embed post, feed, หรือข้อมูลติดต่อ
-- [ ] **Domain** — ตั้งค่าหรือเปลี่ยน custom domain สำหรับเว็บ
-- [ ] **ตรวจสอบ 3 หน้า EN** — เนื้อหาครบ/ถูกต้องหรือไม่ โดยเฉพาะ fix-crack + painting
-- [ ] **Deploy** — ขึ้น Cloudflare Pages ถ้าพร้อม
-- [ ] **Google Search Console** — ใส่ meta verification จริง
-- [ ] **ตรวจสอบ responsive** — 3 หน้าใหม่บนมือถือ/แท็บเล็ต
+### Step 5 — Google Search Console
+- `thiengtham.com` ถูกเพิ่มและ verify ใน Search Console แล้ว (dashboard พร้อมใช้งาน)
 
 ## สถานะโปรเจกต์
 | ประเภท | จำนวน |
@@ -35,4 +33,7 @@
 | หน้า TH | 4 (หน้าแรก + 3 บริการ) |
 | หน้า EN | 4 (หน้าแรก + 3 บริการ) |
 | รวม | 8 หน้า |
-| Build | ✅ ผ่าน (0 error) |
+| Build | ผ่าน (0 error) |
+| Deploy | Cloudflare Pages (thiengtham.com) |
+| GitHub Secrets | 3 ตัว |
+| Google Search Console | พร้อมใช้งาน |
