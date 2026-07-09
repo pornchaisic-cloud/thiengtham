@@ -26,11 +26,13 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
         run: |
           echo "Using wrangler@$(npx --yes wrangler@latest --version 2>/dev/null || echo 'unknown')"
-          # Deploy with verbose log so we can see what wrangler does with dist/functions/
+          # --branch=main required to deploy to production (thiengtham.pages.dev /
+          # thiengtham.com). Without it, wrangler pages deploy sends the upload to
+          # a per-commit preview URL and production never receives the new code.
           npx --yes wrangler@latest pages deploy dist \
             --project-name=thiengtham \
-            --commit-dirty=true \
-            --skip-caching 2>&1 | tee /tmp/wrangler-deploy.log
+            --branch=main \
+            --commit-dirty=true 2>&1 | tee /tmp/wrangler-deploy.log
           echo "--- deploy exit code: ${PIPESTATUS[0]} ---"
-          echo "--- wrangler log (last 60 lines) ---"
-          tail -n 60 /tmp/wrangler-deploy.log || true
+          echo "--- wrangler log (last 40 lines) ---"
+          tail -n 40 /tmp/wrangler-deploy.log || true
