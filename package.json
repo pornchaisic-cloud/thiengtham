@@ -12,9 +12,5 @@
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.8",
     "playwright": "^1.61.1"
-  },
-  "devDependencies": {
-    "@octokit/core": "^7.0.6",
-    "tweetsodium": "^0.0.4"
   }
 }
