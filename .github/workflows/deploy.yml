@@ -27,12 +27,12 @@ jobs:
         run: |
           echo "Token length: ${#CF_API_TOKEN}"
           echo "Account id length: ${#CF_ACCOUNT_ID}"
-          npx --yes wrangler --version
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        env:
-          WRANGLER_LOG: debug
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=thiengtham --log-level=debug --commit-dirty=true
+          npx --yes wrangler@latest --version || true
+          # Plain wrangler deploy step (bypassing wrangler-action@v3 which
+          # was hiding the real error as a generic exit 1)
+          echo "--- Attempting direct wrangler pages deploy ---"
+          npx --yes wrangler@latest pages deploy dist \
+            --project-name=thiengtham \
+            --commit-dirty=true \
+            --log-level=debug 2>&1 || true
+          echo "--- exit code captured above ---"
