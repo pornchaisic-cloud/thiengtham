@@ -77,11 +77,12 @@ export async function onRequest(context) {
         }
       }
 
-      // Always return a single photo (not an album) — only the main image.
-      // full_picture is the primary; first attachment is fallback.
+      // PHOTO path — return all images from the post (full_picture + album
+      // subattachments). The client renders them in a responsive grid so a
+      // single photo OR an album both look like a proper portfolio.
       if (postImages.length > 0) {
         type = 'photo';
-        items = [{ src: postImages[0], url: postUrlLocal }];
+        items = postImages.map((src) => ({ src, url: postUrlLocal }));
         usedPost = post;
         postUrl = postUrlLocal;
         break; // latest post only
