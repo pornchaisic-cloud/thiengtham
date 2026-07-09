@@ -6,3 +6,18 @@ dist/
 src/data/
 secrets*
 All File/
+
+# Runtime/cache files (keep .md plans tracked)
+.mavis/sessions/
+.mavis/cache/
+.mavis/skills/
+.mavis/agents/
+.mavis/diagnostics/
+.mavis/state.json
+.mavis/plans/plan.yaml
+.mavis/plans/plan_*/
+args.json
+check-portfolio.py
+set-secret.cjs
+test-fb-api.ps1
+
