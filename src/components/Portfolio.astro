@@ -13,128 +13,209 @@ const t = locale;
       <h2 class="section-title">{t.portfolio.title}</h2>
       <div class="section-divider"></div>
     </div>
-    <div class="portfolio-masonry reveal" id="portfolioGrid">
-      {[...Array(12)].map((_, i) => (
-        <div
-          class="portfolio-item"
-          style={`transition-delay: ${i * 0.08}s`}
-        >
-          <div class="portfolio-placeholder">
-            <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="400" height="300" fill="var(--surface-soft)"/>
-              <circle cx="200" cy="130" r="40" stroke="var(--muted)" stroke-width="1" opacity="0.3"/>
-              <path d="M160 200l40-50 30 35 30-20 50 55H160z" fill="var(--muted)" opacity="0.15"/>
-              <text x="200" y="260" text-anchor="middle" fill="var(--muted)" font-size="12" font-family="var(--font-display-thai)" opacity="0.5">{t.portfolio.title}</text>
-            </svg>
-          </div>
-          <div class="portfolio-overlay">
-            <span class="portfolio-label">{t.portfolio.title}</span>
-          </div>
-        </div>
-      ))}
+
+    <!-- Initial state: loading skeleton -->
+    <div class="portfolio-loading reveal" id="portfolioLoading">
+      <div class="skeleton-card"></div>
     </div>
-    <div class="portfolio-caption">ซ่อมคอนโด ผลงานเที่ยงทำ ดีเวลลอปเม้นท์</div>
+
+    <!-- Photo variant: horizontal reel (carousel scroll-snap), client-rendered -->
+    <div class="reel-track" id="reelTrack" hidden></div>
+
+    <!-- Video variant: hero centered, client-rendered -->
+    <div class="video-hero" id="videoHero" hidden></div>
+
+    <div class="portfolio-caption" id="portfolioCaption" hidden>
+      ซ่อมคอนโด ผลงานเที่ยงทำ ดีเวลลอปเม้นท์
+    </div>
   </div>
 </section>
 
 <script>
-  // Client-side fetch from /api/facebook-posts (Cloudflare Pages Function)
-  // Replaces placeholders with real FB images from the LATEST post (album-aware).
-  // If fetch fails or API returns no images, placeholders stay as fallback.
+  // Client-side fetch from /api/facebook-posts (Cloudflare Pages Function).
+  // Strategy: use the LATEST post only.
+  //   - 'video' → render hero <video controls> centered
+  //   - 'photo' → render horizontal reel (scroll-snap) with all images
+  //   - null / no items → hide everything (no SVG placeholder)
   async function loadPortfolio() {
-    const grid = document.getElementById('portfolioGrid');
-    if (!grid) return;
+    const loading = document.getElementById('portfolioLoading');
+    const track = document.getElementById('reelTrack');
+    const hero = document.getElementById('videoHero');
+    const caption = document.getElementById('portfolioCaption');
 
     try {
       const res = await fetch('/api/facebook-posts');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const images = data.images || [];
-      if (images.length === 0) return;
+      const items = data.items || [];
+      const type = data.type;
 
-      // Show latest-post caption/banner if present (helps visitor know what they're seeing)
-      const postUrl = data?.meta?.postUrl;
-      const slots = grid.querySelectorAll('.portfolio-item');
-      images.forEach((img, i) => {
-        if (slots[i]) {
-          const targetUrl = img.url || postUrl || '#';
-          slots[i].outerHTML = `
-            <a href="${targetUrl}" target="_blank" rel="noopener" class="portfolio-item">
-              <img src="${img.src}" alt="ซ่อมคอนโด ผลงานเที่ยงทำ ดีเวลลอปเม้นท์"
-                   style="width:100%;height:auto;display:block;" loading="lazy" />
-            </a>
-          `;
-        }
-      });
+      if (loading) loading.hidden = true;
+
+      if (!items.length || !type) {
+        // No media on latest post — keep section minimal/hidden
+        if (track) track.hidden = true;
+        if (hero) hero.hidden = true;
+        if (caption) caption.hidden = true;
+        return;
+      }
+
+      if (type === 'video') {
+        renderVideo(hero, items[0]);
+        if (track) track.hidden = true;
+      } else if (type === 'photo') {
+        renderPhotos(track, items);
+        if (hero) hero.hidden = true;
+      }
+
+      if (caption) caption.hidden = false;
     } catch (e) {
-      // Site must stay usable even if FB API fails — keep placeholders
-      console.warn('Failed to load portfolio images:', e);
+      // Site must stay usable even if FB API fails — hide everything gracefully
+      console.warn('Failed to load portfolio:', e);
+      if (loading) loading.hidden = true;
+      if (track) track.hidden = true;
+      if (hero) hero.hidden = true;
+      if (caption) caption.hidden = true;
     }
+  }
+
+  function renderPhotos(track, items) {
+    if (!track) return;
+    track.hidden = false;
+    track.innerHTML = items
+      .map(
+        (item) => `
+        <a href="${escapeAttr(item.url || '#')}" target="_blank" rel="noopener" class="reel-card">
+          <img src="${escapeAttr(item.src)}" alt="ผลงานเที่ยงทำ ดีเวลลอปเม้นท์" loading="lazy" />
+        </a>
+      `
+      )
+      .join('');
+  }
+
+  function renderVideo(hero, item) {
+    if (!hero) return;
+    hero.hidden = false;
+    const poster = item.poster ? `poster="${escapeAttr(item.poster)}"` : '';
+    hero.innerHTML = `
+      <a href="${escapeAttr(item.url || '#')}" target="_blank" rel="noopener" class="video-frame">
+        <video controls muted playsinline ${poster}>
+          <source src="${escapeAttr(item.src)}" type="video/mp4">
+        </video>
+      </a>
+    `;
+    // Try to play muted on load (autoplay allowed when muted)
+    const v = hero.querySelector('video');
+    if (v) v.play().catch(() => {});
+  }
+
+  function escapeAttr(s) {
+    return String(s || '').replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
   }
 
   loadPortfolio();
 </script>
 
 <style>
-  .portfolio-masonry {
-    columns: 3;
-    column-gap: var(--space-md);
+  /* Loading skeleton (only visible briefly while API loads) */
+  .portfolio-loading {
+    display: flex;
+    justify-content: center;
+    padding: 0 var(--space-md);
   }
-  .portfolio-item {
-    break-inside: avoid;
-    margin-bottom: var(--space-md);
-    position: relative;
+  .skeleton-card {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 3 / 4;
+    background: var(--surface-soft);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    animation: skeleton-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.85; }
+  }
+
+  /* PHOTO variant — horizontal reel (carousel scroll-snap) */
+  .reel-track {
+    display: flex;
+    gap: var(--space-md);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px var(--space-md) 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--sun) var(--surface-soft);
+  }
+  .reel-track::-webkit-scrollbar { height: 6px; }
+  .reel-track::-webkit-scrollbar-track { background: var(--surface-soft); }
+  .reel-track::-webkit-scrollbar-thumb { background: var(--sun); border-radius: 3px; }
+  .reel-track::before,
+  .reel-track::after {
+    content: '';
+    flex: 0 0 calc(50vw - 160px);
+    min-width: 16px;
+  }
+  .reel-card {
+    flex: 0 0 320px;
+    max-width: 80vw;
+    scroll-snap-align: center;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     border: 1px solid var(--border);
+    background: var(--surface);
+    aspect-ratio: 3 / 4;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s,
+                box-shadow 0.3s;
+    display: block;
   }
-  .portfolio-item:hover {
+  .reel-card:hover {
     transform: scale(1.02);
     border-color: var(--sun);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 12px 32px rgba(200, 150, 46, 0.15);
   }
-  .portfolio-placeholder {
+  .reel-card img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    overflow: hidden;
   }
-  .portfolio-placeholder svg {
-    width: 100%;
-    height: auto;
-    display: block;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .portfolio-item:hover .portfolio-placeholder svg {
-    transform: scale(1.05);
-  }
-  .portfolio-item:nth-child(1) .portfolio-placeholder svg { height: 240px; }
-  .portfolio-item:nth-child(2) .portfolio-placeholder svg { height: 300px; }
-  .portfolio-item:nth-child(3) .portfolio-placeholder svg { height: 200px; }
-  .portfolio-item:nth-child(4) .portfolio-placeholder svg { height: 280px; }
-  .portfolio-item:nth-child(5) .portfolio-placeholder svg { height: 220px; }
-  .portfolio-item:nth-child(6) .portfolio-placeholder svg { height: 260px; }
-  .portfolio-item:nth-child(7) .portfolio-placeholder svg { height: 240px; }
-  .portfolio-item:nth-child(8) .portfolio-placeholder svg { height: 300px; }
-  .portfolio-item:nth-child(9) .portfolio-placeholder svg { height: 220px; }
-  .portfolio-item:nth-child(10) .portfolio-placeholder svg { height: 280px; }
-  .portfolio-item:nth-child(11) .portfolio-placeholder svg { height: 200px; }
-  .portfolio-item:nth-child(12) .portfolio-placeholder svg { height: 260px; }
 
-  .portfolio-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* VIDEO variant — hero centered */
+  .video-hero {
     display: flex;
-    align-items: flex-end;
-    padding: var(--space-md);
+    justify-content: center;
+    padding: 0 var(--space-md);
   }
-  .portfolio-item:hover .portfolio-overlay {
-    opacity: 1;
+  .video-frame {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 9 / 16;
+    max-height: 80vh;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--sun);
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(200, 150, 46, 0.18);
+    transition: transform 0.4s, box-shadow 0.4s;
   }
+  .video-frame:hover {
+    transform: scale(1.01);
+    box-shadow: 0 16px 48px rgba(200, 150, 46, 0.28);
+  }
+  .video-frame video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   .portfolio-caption {
     text-align: center;
     padding: 16px 0 0;
@@ -142,19 +223,12 @@ const t = locale;
     color: var(--muted);
     font-family: var(--font-display-thai);
   }
-  .portfolio-label {
-    font-family: var(--font-display-thai);
-    font-size: 0.85rem;
-    color: #fff;
-  }
-  @media (max-width: 768px) {
-    .portfolio-masonry {
-      columns: 2;
-    }
-  }
+
+  /* Mobile: smaller card, tighter spacing */
   @media (max-width: 480px) {
-    .portfolio-masonry {
-      columns: 1;
-    }
+    .reel-card { flex-basis: 78vw; }
+    .reel-track::before,
+    .reel-track::after { flex-basis: calc(50vw - 39vw); min-width: 8px; }
+    .video-frame { max-width: 92vw; }
   }
 </style>

@@ -1,7 +1,9 @@
 // Cloudflare Pages Function — proxy Facebook Graph API for Portfolio section
 // Reads PUBLIC_FB_ACCESS_TOKEN from CF Pages env (production)
-// Returns ALL images from the LATEST post (album-aware).
-// If the latest post has no images, falls back to the next post with images.
+// Uses the LATEST post:
+//   - If the latest post is a VIDEO/REEL → return { type: 'video', items: [video] }
+//   - If the latest post is a PHOTO (single or album) → return { type: 'photo', items: [images...] }
+// If the latest post has no media, no items are returned (client will hide the section).
 export async function onRequest(context) {
   const token = context.env.PUBLIC_FB_ACCESS_TOKEN;
   if (!token) {
@@ -11,7 +13,7 @@ export async function onRequest(context) {
     );
   }
 
-  const url = `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,permalink_url,full_picture,attachments{media{source,image},subattachments{media{image}}}&limit=20&access_token=${token}`;
+  const url = `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,permalink_url,full_picture,attachments{media},subattachments{media{image}}&limit=10&access_token=${token}`;
 
   try {
     const res = await fetch(url);
@@ -25,17 +27,35 @@ export async function onRequest(context) {
     const data = await res.json();
     const posts = data.data || [];
 
-    // NEW STRATEGY: take ALL images from the most recent post that has any.
-    // Supports albums (subattachments) and multi-attachment posts.
-    let images = [];
+    let type = null;       // 'video' | 'photo'
+    let items = [];        // [{ src, poster?, url }]
     let usedPost = null;
+    let postUrl = null;
 
-    const stripKey = (url) => url.split("?")[0].split("_n.jpg")[0] + "_n.jpg";
+    const stripKey = (u) => u.split("?")[0].split("_n.jpg")[0] + "_n.jpg";
 
     for (const post of posts) {
+      const postUrlLocal = post.permalink_url || "#";
+      const att = post.attachments?.data?.[0];
+
+      // VIDEO path — `media.source` exists, `media.image` may or may not
+      // FB reels/videos return: { media: { source: 'https://video...mp4', image: { src: '...' }, type: 'video' } }
+      const mediaSrc = att?.media?.source;
+      if (mediaSrc && (typeof mediaSrc === 'string') && mediaSrc.startsWith('http')) {
+        type = 'video';
+        items = [{
+          src: mediaSrc,
+          poster: post.full_picture || att.media?.image?.src || null,
+          url: postUrlLocal,
+        }];
+        usedPost = post;
+        postUrl = postUrlLocal;
+        break; // latest post only
+      }
+
+      // PHOTO path — collect full_picture + attachments/subattachments (album)
       const postImages = [];
       const seen = new Set();
-
       const add = (src) => {
         if (!src) return;
         const key = stripKey(src);
@@ -45,15 +65,12 @@ export async function onRequest(context) {
         }
       };
 
-      // full_picture is the first/cover image (always present when post has photos)
       add(post.full_picture);
-
-      // Attachments — single photo, video (skipped), or album
       if (post.attachments?.data) {
-        for (const att of post.attachments.data) {
-          add(att.media?.image?.src);
-          if (att.subattachments?.data) {
-            for (const sub of att.subattachments.data) {
+        for (const a of post.attachments.data) {
+          add(a.media?.image?.src);
+          if (a.subattachments?.data) {
+            for (const sub of a.subattachments.data) {
               add(sub.media?.image?.src);
             }
           }
@@ -61,23 +78,24 @@ export async function onRequest(context) {
       }
 
       if (postImages.length > 0) {
+        type = 'photo';
+        items = postImages.map((src) => ({ src, url: postUrlLocal }));
         usedPost = post;
-        const link = post.permalink_url || "#";
-        images = postImages.map((src) => ({ src, url: link }));
-        break; // only the latest post with images
+        postUrl = postUrlLocal;
+        break; // latest post only
       }
-    }
 
-    // Cap at 12 to keep grid reasonable if there's a huge album
-    images = images.slice(0, 12);
+      // Latest post had nothing usable — try next post by NOT breaking
+    }
 
     return new Response(
       JSON.stringify({
-        images,
+        type,                              // 'video' | 'photo' | null
+        items,                             // array (empty when no media on latest)
         meta: {
           postId: usedPost?.id || null,
-          postUrl: usedPost?.permalink_url || null,
-          imageCount: images.length,
+          postUrl,
+          count: items.length,
         },
       }),
       {
