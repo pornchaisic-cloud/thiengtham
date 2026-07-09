@@ -20,19 +20,16 @@ jobs:
       - run: npm run build
         env:
           PUBLIC_FB_ACCESS_TOKEN: ${{ secrets.PUBLIC_FB_ACCESS_TOKEN }}
-      - name: Debug auth
+      - name: Deploy to Cloudflare Pages
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
         run: |
-          echo "Token length: ${#CF_API_TOKEN}"
-          echo "Account id length: ${#CF_ACCOUNT_ID}"
-          npx --yes wrangler@latest --version || true
-          # Plain wrangler deploy step (bypassing wrangler-action@v3 which
-          # was hiding the real error as a generic exit 1)
-          echo "--- Attempting direct wrangler pages deploy ---"
+          echo "Using wrangler@$(npx --yes wrangler@latest --version 2>/dev/null || echo 'unknown')"
+          echo "Deploying to project=thiengtham branch=main"
           npx --yes wrangler@latest pages deploy dist \
             --project-name=thiengtham \
+            --branch=main \
             --commit-dirty=true \
-            --log-level=debug 2>&1 || true
-          echo "--- exit code captured above ---"
+            --skip-caching 2>&1
+          echo "--- deploy exit code: $? ---"
