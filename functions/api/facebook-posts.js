@@ -1,6 +1,7 @@
 // Cloudflare Pages Function — proxy Facebook Graph API for Portfolio section
 // Reads PUBLIC_FB_ACCESS_TOKEN from CF Pages env (production)
-// Returns up to 6 image posts (deduplicated by image URL)
+// Returns ALL images from the LATEST post (album-aware).
+// If the latest post has no images, falls back to the next post with images.
 export async function onRequest(context) {
   const token = context.env.PUBLIC_FB_ACCESS_TOKEN;
   if (!token) {
@@ -10,7 +11,7 @@ export async function onRequest(context) {
     );
   }
 
-  const url = `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,permalink_url,full_picture,attachments{media{source,image},subattachments{media{image}}}&limit=9&access_token=${token}`;
+  const url = `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,permalink_url,full_picture,attachments{media{source,image},subattachments{media{image}}}&limit=20&access_token=${token}`;
 
   try {
     const res = await fetch(url);
@@ -23,45 +24,66 @@ export async function onRequest(context) {
     }
     const data = await res.json();
     const posts = data.data || [];
-    const images = [];
-    const seen = new Set();
 
-    // Take ONE cover image per post (matches build-time full_picture behavior)
-    // Priority: full_picture (always available) → attachments.media.image.src → first subattachment
+    // NEW STRATEGY: take ALL images from the most recent post that has any.
+    // Supports albums (subattachments) and multi-attachment posts.
+    let images = [];
+    let usedPost = null;
+
+    const stripKey = (url) => url.split("?")[0].split("_n.jpg")[0] + "_n.jpg";
+
     for (const post of posts) {
-      const link = post.permalink_url || "#";
-      let src = post.full_picture;
+      const postImages = [];
+      const seen = new Set();
 
-      if (!src && post.attachments?.data) {
+      const add = (src) => {
+        if (!src) return;
+        const key = stripKey(src);
+        if (!seen.has(key)) {
+          seen.add(key);
+          postImages.push(src);
+        }
+      };
+
+      // full_picture is the first/cover image (always present when post has photos)
+      add(post.full_picture);
+
+      // Attachments — single photo, video (skipped), or album
+      if (post.attachments?.data) {
         for (const att of post.attachments.data) {
-          if (att.media?.image?.src) { src = att.media.image.src; break; }
+          add(att.media?.image?.src);
           if (att.subattachments?.data) {
             for (const sub of att.subattachments.data) {
-              if (sub.media?.image?.src) { src = sub.media.image.src; break; }
+              add(sub.media?.image?.src);
             }
-            if (src) break;
           }
         }
       }
 
-      if (src) {
-        // Dedupe by base image URL (strip query params and size suffixes)
-        const key = src.split("?")[0].split("_n.jpg")[0] + "_n.jpg";
-        if (!seen.has(key)) {
-          seen.add(key);
-          images.push({ src, url: link });
-        }
+      if (postImages.length > 0) {
+        usedPost = post;
+        const link = post.permalink_url || "#";
+        images = postImages.map((src) => ({ src, url: link }));
+        break; // only the latest post with images
       }
-      if (images.length >= 6) break;
     }
 
+    // Cap at 12 to keep grid reasonable if there's a huge album
+    images = images.slice(0, 12);
+
     return new Response(
-      JSON.stringify({ images: images.slice(0, 6) }),
+      JSON.stringify({
+        images,
+        meta: {
+          postId: usedPost?.id || null,
+          postUrl: usedPost?.permalink_url || null,
+          imageCount: images.length,
+        },
+      }),
       {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          // Cache on CF edge for 5 min — FB doesn't change posts every second
           "Cache-Control": "public, max-age=300, s-maxage=300",
         },
       }

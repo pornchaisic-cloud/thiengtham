@@ -14,7 +14,7 @@ const t = locale;
       <div class="section-divider"></div>
     </div>
     <div class="portfolio-masonry reveal" id="portfolioGrid">
-      {[...Array(6)].map((_, i) => (
+      {[...Array(12)].map((_, i) => (
         <div
           class="portfolio-item"
           style={`transition-delay: ${i * 0.08}s`}
@@ -39,7 +39,8 @@ const t = locale;
 
 <script>
   // Client-side fetch from /api/facebook-posts (Cloudflare Pages Function)
-  // Replaces placeholders with real FB images. If fetch fails, placeholders stay.
+  // Replaces placeholders with real FB images from the LATEST post (album-aware).
+  // If fetch fails or API returns no images, placeholders stay as fallback.
   async function loadPortfolio() {
     const grid = document.getElementById('portfolioGrid');
     if (!grid) return;
@@ -51,11 +52,14 @@ const t = locale;
       const images = data.images || [];
       if (images.length === 0) return;
 
+      // Show latest-post caption/banner if present (helps visitor know what they're seeing)
+      const postUrl = data?.meta?.postUrl;
       const slots = grid.querySelectorAll('.portfolio-item');
       images.forEach((img, i) => {
         if (slots[i]) {
+          const targetUrl = img.url || postUrl || '#';
           slots[i].outerHTML = `
-            <a href="${img.url}" target="_blank" rel="noopener" class="portfolio-item">
+            <a href="${targetUrl}" target="_blank" rel="noopener" class="portfolio-item">
               <img src="${img.src}" alt="ซ่อมคอนโด ผลงานเที่ยงทำ ดีเวลลอปเม้นท์"
                    style="width:100%;height:auto;display:block;" loading="lazy" />
             </a>
@@ -111,6 +115,12 @@ const t = locale;
   .portfolio-item:nth-child(4) .portfolio-placeholder svg { height: 280px; }
   .portfolio-item:nth-child(5) .portfolio-placeholder svg { height: 220px; }
   .portfolio-item:nth-child(6) .portfolio-placeholder svg { height: 260px; }
+  .portfolio-item:nth-child(7) .portfolio-placeholder svg { height: 240px; }
+  .portfolio-item:nth-child(8) .portfolio-placeholder svg { height: 300px; }
+  .portfolio-item:nth-child(9) .portfolio-placeholder svg { height: 220px; }
+  .portfolio-item:nth-child(10) .portfolio-placeholder svg { height: 280px; }
+  .portfolio-item:nth-child(11) .portfolio-placeholder svg { height: 200px; }
+  .portfolio-item:nth-child(12) .portfolio-placeholder svg { height: 260px; }
 
   .portfolio-overlay {
     position: absolute;
