@@ -19,8 +19,8 @@ const t = locale;
       <div class="skeleton-card"></div>
     </div>
 
-    <!-- Photo variant: horizontal reel (carousel scroll-snap), client-rendered -->
-    <div class="reel-track" id="reelTrack" hidden></div>
+    <!-- Photo variant: single centered hero photo, client-rendered -->
+    <div class="photo-hero" id="photoHero" hidden></div>
 
     <!-- Video variant: hero centered, client-rendered -->
     <div class="video-hero" id="videoHero" hidden></div>
@@ -35,11 +35,11 @@ const t = locale;
   // Client-side fetch from /api/facebook-posts (Cloudflare Pages Function).
   // Strategy: use the LATEST post only.
   //   - 'video' → render hero <video controls> centered
-  //   - 'photo' → render horizontal reel (scroll-snap) with all images
+  //   - 'photo' → render single centered hero photo (albums are collapsed to first image)
   //   - null / no items → hide everything (no SVG placeholder)
   async function loadPortfolio() {
     const loading = document.getElementById('portfolioLoading');
-    const track = document.getElementById('reelTrack');
+    const photo = document.getElementById('photoHero');
     const hero = document.getElementById('videoHero');
     const caption = document.getElementById('portfolioCaption');
 
@@ -54,7 +54,7 @@ const t = locale;
 
       if (!items.length || !type) {
         // No media on latest post — keep section minimal/hidden
-        if (track) track.hidden = true;
+        if (photo) photo.hidden = true;
         if (hero) hero.hidden = true;
         if (caption) caption.hidden = true;
         return;
@@ -62,9 +62,9 @@ const t = locale;
 
       if (type === 'video') {
         renderVideo(hero, items[0]);
-        if (track) track.hidden = true;
+        if (photo) photo.hidden = true;
       } else if (type === 'photo') {
-        renderPhotos(track, items);
+        renderPhoto(photo, items[0]);
         if (hero) hero.hidden = true;
       }
 
@@ -73,24 +73,20 @@ const t = locale;
       // Site must stay usable even if FB API fails — hide everything gracefully
       console.warn('Failed to load portfolio:', e);
       if (loading) loading.hidden = true;
-      if (track) track.hidden = true;
+      if (photo) photo.hidden = true;
       if (hero) hero.hidden = true;
       if (caption) caption.hidden = true;
     }
   }
 
-  function renderPhotos(track, items) {
-    if (!track) return;
-    track.hidden = false;
-    track.innerHTML = items
-      .map(
-        (item) => `
-        <a href="${escapeAttr(item.url || '#')}" target="_blank" rel="noopener" class="reel-card">
-          <img src="${escapeAttr(item.src)}" alt="ผลงานเที่ยงทำ ดีเวลลอปเม้นท์" loading="lazy" />
-        </a>
-      `
-      )
-      .join('');
+  function renderPhoto(hero, item) {
+    if (!hero) return;
+    hero.hidden = false;
+    hero.innerHTML = `
+      <a href="${escapeAttr(item.url || '#')}" target="_blank" rel="noopener" class="photo-frame">
+        <img src="${escapeAttr(item.src)}" alt="ผลงานเที่ยงทำ ดีเวลลอปเม้นท์" loading="lazy" />
+      </a>
+    `;
   }
 
   function renderVideo(hero, item) {
@@ -139,47 +135,29 @@ const t = locale;
     50% { opacity: 0.85; }
   }
 
-  /* PHOTO variant — horizontal reel (carousel scroll-snap) */
-  .reel-track {
+  /* PHOTO variant — single centered hero photo */
+  .photo-hero {
     display: flex;
-    gap: var(--space-md);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 8px var(--space-md) 20px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--sun) var(--surface-soft);
+    justify-content: center;
+    padding: 0 var(--space-md);
   }
-  .reel-track::-webkit-scrollbar { height: 6px; }
-  .reel-track::-webkit-scrollbar-track { background: var(--surface-soft); }
-  .reel-track::-webkit-scrollbar-thumb { background: var(--sun); border-radius: 3px; }
-  .reel-track::before,
-  .reel-track::after {
-    content: '';
-    flex: 0 0 calc(50vw - 160px);
-    min-width: 16px;
-  }
-  .reel-card {
-    flex: 0 0 320px;
-    max-width: 80vw;
-    scroll-snap-align: center;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    aspect-ratio: 3 / 4;
-    cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.3s,
-                box-shadow 0.3s;
+  .photo-frame {
     display: block;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--sun);
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: 0 12px 40px rgba(200, 150, 46, 0.18);
+    transition: transform 0.4s, box-shadow 0.4s;
   }
-  .reel-card:hover {
-    transform: scale(1.02);
-    border-color: var(--sun);
-    box-shadow: 0 12px 32px rgba(200, 150, 46, 0.15);
+  .photo-frame:hover {
+    transform: scale(1.01);
+    box-shadow: 0 16px 48px rgba(200, 150, 46, 0.28);
   }
-  .reel-card img {
+  .photo-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -224,11 +202,9 @@ const t = locale;
     font-family: var(--font-display-thai);
   }
 
-  /* Mobile: smaller card, tighter spacing */
+  /* Mobile: tighter spacing */
   @media (max-width: 480px) {
-    .reel-card { flex-basis: 78vw; }
-    .reel-track::before,
-    .reel-track::after { flex-basis: calc(50vw - 39vw); min-width: 8px; }
+    .photo-frame { max-width: 92vw; }
     .video-frame { max-width: 92vw; }
   }
 </style>

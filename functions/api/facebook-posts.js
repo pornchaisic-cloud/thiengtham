@@ -77,9 +77,11 @@ export async function onRequest(context) {
         }
       }
 
+      // Always return a single photo (not an album) — only the main image.
+      // full_picture is the primary; first attachment is fallback.
       if (postImages.length > 0) {
         type = 'photo';
-        items = postImages.map((src) => ({ src, url: postUrlLocal }));
+        items = [{ src: postImages[0], url: postUrlLocal }];
         usedPost = post;
         postUrl = postUrlLocal;
         break; // latest post only
