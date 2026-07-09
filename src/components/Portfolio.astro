@@ -5,43 +5,6 @@ export interface Props {
 
 const { locale } = Astro.props;
 const t = locale;
-
-interface FBPost {
-  id: string;
-  permalink_url?: string;
-  full_picture?: string;
-}
-
-const FB_TOKEN = import.meta.env.PUBLIC_FB_ACCESS_TOKEN;
-let images: { src: string; url: string }[] = [];
-
-if (FB_TOKEN) {
-  try {
-    const res = await fetch(
-      `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=id,message,permalink_url,full_picture&limit=9&access_token=${FB_TOKEN}`
-    );
-    if (res.ok) {
-      const data = await res.json();
-      const posts: FBPost[] = data.data || [];
-      const seen = new Set<string>();
-      for (const post of posts) {
-        const link = post.permalink_url || "#";
-        const postId = post.id;
-
-        // Strategy 1: full_picture — works for all post types (link, reel, album, etc.)
-        if (post.full_picture) {
-          const src = post.full_picture;
-          if (!seen.has(postId)) { seen.add(postId); images.push({ src, url: link }); }
-        }
-
-        if (images.length >= 6) break;
-      }
-      images = images.slice(0, 6);
-    }
-  } catch (e) {
-    console.error("Facebook fetch failed:", e);
-  }
-}
 ---
 
 <section class="section" id="portfolio">
@@ -51,46 +14,62 @@ if (FB_TOKEN) {
       <div class="section-divider"></div>
     </div>
     <div class="portfolio-masonry reveal" id="portfolioGrid">
-      {images.length > 0
-        ? images.map(
-            (img) => (
-              <a
-                href={img.url}
-                target="_blank"
-                rel="noopener"
-                class="portfolio-item"
-              >
-                <img
-                  src={img.src}
-                  alt="ซ่อมคอนโด ผลงานเที่ยงทำ ดีเวลลอปเม้นท์"
-                  style="width:100%;height:auto;display:block;"
-                  loading="lazy"
-                />
-              </a>
-            )
-          )
-        : [...Array(6)].map((_, i) => (
-            <div
-              class="portfolio-item"
-              style={`transition-delay: ${i * 0.08}s`}
-            >
-              <div class="portfolio-placeholder">
-                <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="400" height="300" fill="var(--surface-soft)"/>
-                  <circle cx="200" cy="130" r="40" stroke="var(--muted)" stroke-width="1" opacity="0.3"/>
-                  <path d="M160 200l40-50 30 35 30-20 50 55H160z" fill="var(--muted)" opacity="0.15"/>
-                  <text x="200" y="260" text-anchor="middle" fill="var(--muted)" font-size="12" font-family="var(--font-display-thai)" opacity="0.5">{t.portfolio.title}</text>
-                </svg>
-              </div>
-              <div class="portfolio-overlay">
-                <span class="portfolio-label">{t.portfolio.title}</span>
-              </div>
-            </div>
-          ))}
+      {[...Array(6)].map((_, i) => (
+        <div
+          class="portfolio-item"
+          style={`transition-delay: ${i * 0.08}s`}
+        >
+          <div class="portfolio-placeholder">
+            <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="300" fill="var(--surface-soft)"/>
+              <circle cx="200" cy="130" r="40" stroke="var(--muted)" stroke-width="1" opacity="0.3"/>
+              <path d="M160 200l40-50 30 35 30-20 50 55H160z" fill="var(--muted)" opacity="0.15"/>
+              <text x="200" y="260" text-anchor="middle" fill="var(--muted)" font-size="12" font-family="var(--font-display-thai)" opacity="0.5">{t.portfolio.title}</text>
+            </svg>
+          </div>
+          <div class="portfolio-overlay">
+            <span class="portfolio-label">{t.portfolio.title}</span>
+          </div>
+        </div>
+      ))}
     </div>
     <div class="portfolio-caption">ซ่อมคอนโด ผลงานเที่ยงทำ ดีเวลลอปเม้นท์</div>
   </div>
 </section>
+
+<script>
+  // Client-side fetch from /api/facebook-posts (Cloudflare Pages Function)
+  // Replaces placeholders with real FB images. If fetch fails, placeholders stay.
+  async function loadPortfolio() {
+    const grid = document.getElementById('portfolioGrid');
+    if (!grid) return;
+
+    try {
+      const res = await fetch('/api/facebook-posts');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const images = data.images || [];
+      if (images.length === 0) return;
+
+      const slots = grid.querySelectorAll('.portfolio-item');
+      images.forEach((img, i) => {
+        if (slots[i]) {
+          slots[i].outerHTML = `
+            <a href="${img.url}" target="_blank" rel="noopener" class="portfolio-item">
+              <img src="${img.src}" alt="ซ่อมคอนโด ผลงานเที่ยงทำ ดีเวลลอปเม้นท์"
+                   style="width:100%;height:auto;display:block;" loading="lazy" />
+            </a>
+          `;
+        }
+      });
+    } catch (e) {
+      // Site must stay usable even if FB API fails — keep placeholders
+      console.warn('Failed to load portfolio images:', e);
+    }
+  }
+
+  loadPortfolio();
+</script>
 
 <style>
   .portfolio-masonry {
@@ -169,6 +148,3 @@ if (FB_TOKEN) {
     }
   }
 </style>
-
-
-
