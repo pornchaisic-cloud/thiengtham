@@ -14,15 +14,18 @@ const t = locale;
       <div class="section-divider"></div>
     </div>
 
-    <!-- Initial state: loading skeleton -->
+    <!-- Initial state: loading skeleton (server-rendered, gets scoped styles) -->
     <div class="portfolio-loading reveal" id="portfolioLoading">
       <div class="skeleton-card"></div>
     </div>
 
-    <!-- Photo variant: responsive grid (3/2/1 columns), client-rendered -->
+    <!-- Photo variant: responsive grid (3/2/1 columns), client-rendered.
+         Container is server-rendered, but the cards inside are generated
+         by JS (see <script> below) — they don't get Astro's data-attr
+         automatically, so the whole <style> block uses is:global. -->
     <div class="photo-grid" id="photoGrid" hidden></div>
 
-    <!-- Video variant: hero centered, client-rendered -->
+    <!-- Video variant: hero centered, client-rendered (see <script>) -->
     <div class="video-hero" id="videoHero" hidden></div>
 
     <div class="portfolio-caption" id="portfolioCaption" hidden>
@@ -118,7 +121,16 @@ const t = locale;
   loadPortfolio();
 </script>
 
-<style>
+<style is:global>
+  /* NOTE: `is:global` is required because the photo cards / video frames /
+   * inner <img>/<video> are generated CLIENT-SIDE by the <script> below.
+   * Astro's default scoped style adds a `data-astro-cid-XXX` attribute to
+   * server-rendered elements only — the JS-generated children don't have
+   * it, so selectors like `.photo-card[data-astro-cid-uhrerali]` would
+   * silently miss them, leaving the cards completely unstyled (no aspect
+   * ratio, no border, no hover, no gold ring). Class names below are
+   * unique to this component so making them global is safe. */
+
   /* Loading skeleton (only visible briefly while API loads) */
   .portfolio-loading {
     display: flex;
