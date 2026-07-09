@@ -26,10 +26,11 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
         run: |
           echo "Using wrangler@$(npx --yes wrangler@latest --version 2>/dev/null || echo 'unknown')"
-          echo "Deploying to project=thiengtham branch=main"
+          # Deploy with verbose log so we can see what wrangler does with dist/functions/
           npx --yes wrangler@latest pages deploy dist \
             --project-name=thiengtham \
-            --branch=main \
             --commit-dirty=true \
-            --skip-caching 2>&1
-          echo "--- deploy exit code: $? ---"
+            --skip-caching 2>&1 | tee /tmp/wrangler-deploy.log
+          echo "--- deploy exit code: ${PIPESTATUS[0]} ---"
+          echo "--- wrangler log (last 60 lines) ---"
+          tail -n 60 /tmp/wrangler-deploy.log || true
