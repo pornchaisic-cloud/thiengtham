@@ -4,6 +4,10 @@
 //   - If the latest post is a VIDEO/REEL → return { type: 'video', items: [video] }
 //   - If the latest post is a PHOTO (single or album) → return { type: 'photo', items: [images...] }
 // If the latest post has no media, no items are returned (client will hide the section).
+//
+// IMPORTANT: `subattachments` is a NESTED field of `attachments`, not a top-level
+// field of the post. Must request `attachments{media,subattachments{media{image}}}`
+// — putting `subattachments` at the top level is silently ignored by the FB API.
 export async function onRequest(context) {
   const token = context.env.PUBLIC_FB_ACCESS_TOKEN;
   if (!token) {
@@ -13,7 +17,7 @@ export async function onRequest(context) {
     );
   }
 
-  const url = `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,permalink_url,full_picture,attachments{media},subattachments{media{image}}&limit=10&access_token=${token}`;
+  const url = `https://graph.facebook.com/v22.0/ThiengTham.DEV/posts?fields=message,permalink_url,full_picture,attachments{media,subattachments{media{image}}}&limit=10&access_token=${token}`;
 
   try {
     const res = await fetch(url);
