@@ -137,6 +137,15 @@ const t = locale;
     justify-content: center;
     padding: 0 var(--space-md);
   }
+  /* Override: when JS sets hidden=true, force display:none.
+   * Without this, `.portfolio-loading { display: flex }` (specificity 0,1,0)
+   * ties with the UA `[hidden] { display: none }` (specificity 0,1,0) and
+   * the author rule wins by source order — leaving the skeleton visible
+   * after photos load. Targeting with `.portfolio-loading[hidden]` (0,2,0)
+   * beats it cleanly. */
+  .portfolio-loading[hidden] {
+    display: none;
+  }
   .skeleton-card {
     width: 100%;
     max-width: 320px;
